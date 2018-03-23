@@ -1,23 +1,32 @@
 package com.jyx.workflow.service.impl;
 
 import com.jyx.workflow.service.ActivityConsumerService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+import org.activiti.engine.*;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.task.Task;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service("activityService")
 public class ActivityConsumerServiceImpl implements ActivityConsumerService {
 
-    @Autowired
-    private RuntimeService runtimeService;
-    @Autowired
-    private TaskService taskService;
+    @Resource
+    private ProcessEngine processEngine;            //流程引擎
+    @Resource
+    private RuntimeService runtimeService;          //运行时服务
+    @Resource
+    private TaskService taskService;                //任务服务
+    @Resource
+    private RepositoryService repositoryService;    //依赖服务
+    @Resource
+    private IdentityService identityService;        //用户和组的管理
+    @Resource
+    private ManagementService managementService;    //日常维护服务
+    @Resource
+    private HistoryService historyService;          //历史记录服务
 
     @Override
     public boolean startActivityDemo() {

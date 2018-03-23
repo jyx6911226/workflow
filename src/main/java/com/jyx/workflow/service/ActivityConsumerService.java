@@ -12,6 +12,6 @@ public interface ActivityConsumerService {
      * @return
      */
     @RequestMapping(value="/startActivityDemo",method= RequestMethod.GET)
-    public boolean startActivityDemo();
+    boolean startActivityDemo();
 
 }
