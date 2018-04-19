@@ -3,6 +3,7 @@ package com.jyx.workflow;
 import com.jyx.workflow.service.ActivityConsumerService;
 import org.activiti.engine.*;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.activiti.engine.impl.test.PluggableActivitiTestCase;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.task.Task;
@@ -16,9 +17,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * 工作流测试一
+ * 流程定义及流程变量测试
+ * */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class WorkflowApplicationTests {
+public class WorkflowApplicationTests extends PluggableActivitiTestCase {
 	@Resource
 	private ActivityConsumerService activityConsumerService;
 

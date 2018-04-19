@@ -3,8 +3,8 @@
   <process id="wired" isClosed="false" isExecutable="true" name="wiredProcess" processType="None">
     <startEvent id="_2" name="StartEvent"/>
     <endEvent id="_4" name="EndEvent"/>
-    <userTask activiti:assignee="张三" activiti:exclusive="true" id="_5" name="组长审批"/>
-    <userTask activiti:assignee="李四" activiti:exclusive="true" id="_6" name="经理审批"/>
+    <userTask activiti:exclusive="true" id="_5" name="组长审批"/>
+    <userTask activiti:exclusive="true" id="_6" name="经理审批"/>
     <sequenceFlow id="_7" sourceRef="_2" targetRef="_5"/>
     <sequenceFlow id="_8" name="不重要" sourceRef="_5" targetRef="_4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${importent==false}]]></conditionExpression>
