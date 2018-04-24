@@ -2,9 +2,10 @@ package com.jyx.workflow;
 
 import org.activiti.engine.*;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.activiti.engine.impl.test.PluggableActivitiTestCase;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
-import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.task.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,11 +17,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 工作流测试七邮件任务
+ * 工作流测试七
+ * 个人任务分配
+ * 方式一：直接指定代理人（在流程图中直接指定，不再演示）
+ * 方式二：通过流程变量设置代理人(在流程图的任务中设置代理人assignee)
+ * 方式三：通过api通过代码设置代理人(见TaskListenerImpl)
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MailTaskTest {
+public class PersonalTaskTest extends PluggableActivitiTestCase {
 
     @Resource
     private RuntimeService runtimeService;          //运行时服务
@@ -43,41 +48,54 @@ public class MailTaskTest {
         DeploymentBuilder deploymentBuilder = repositoryService.createDeployment();
 
         Deployment deployment = deploymentBuilder
-                .name("mailTask")
-                //添加资源文件方式一
-                .addClasspathResource("processes/mailTask.bpmn")
-                .addClasspathResource("processes/mailTask.png")
-                //添加资源文件方式二
-                //以zip包的形式添加资源文件（必须为zip格式）
-                //.addZipInputStream(new ZipInputStream(this.getClass().getClassLoader().getResourceAsStream(processFilePath)))
+                .name("personalTask2")
+                //方式二
+//              .addClasspathResource("processes/personalTask.bpmn")
+//              .addClasspathResource("processes/personalTask.png")
+                //方式三
+                .addClasspathResource("processes/personalTask2.bpmn")
+                .addClasspathResource("processes/personalTask2.png")
                 .deploy();
         System.out.println("流程id："+ deployment.getId()+"   流程名称："+deployment.getName());
     }
-    /**
-     * 查询流程定义
-     *
-     * */
-    @Test
-    public void queryDeployProcess() {
-        List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().list();
-        list.forEach(item -> {System.out.println(item.getKey());
-            System.out.println(item.getName());
-        });
 
-        //List<Execution> list = runtimeService.createExecutionQuery().processDefinitionKey("MailTask").list();
-        //list.forEach(item -> System.out.println(item));
-}
     /**
      * 2.启动
      * */
     @Test
     public void startProcess() {
         Map<String,Object> map = new HashMap<String,Object>();
-        ExecutionEntity pi1 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("MailTask",map);
+        //方式二：通过流程变量设置代理人
+        //map.put("assigneeName","张三");
+        ExecutionEntity pi1 = (ExecutionEntity) runtimeService.startProcessInstanceByKey("personalTask2",map);
 
         //执行对象id
         String executionId = pi1.getId();
         System.out.println("executionId:"+executionId);
-        //executionId:42501
+        //executionId:120001
+    }
+
+    /**
+     * 3.查询待办的个人任务
+     * */
+    @Test
+    public void queryTaskByAsignee() {
+        List<Task> tasks = taskService.createTaskQuery()
+                .taskCandidateOrAssigned("张三")
+                .processDefinitionKey("personalTask2")
+                .list();
+        tasks.forEach(
+                item-> System.out.println(item)
+        );
+        //Task[id=120005, name=UserTask]
+    }
+
+    /**
+     * 4.将个人任务从一个人（张三）分配给另一个人（李四）
+     *
+     * */
+    @Test
+    public void giveTask2Others() {
+        taskService.setAssignee("135004","李四");
     }
 }
